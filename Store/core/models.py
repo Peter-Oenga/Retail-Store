@@ -5,6 +5,10 @@ import datetime
 class category(models.Model):
     name = models.CharField(max_length=100)
 
+    class Meta:
+        verbose_name_plural = 'catogories'
+
+
     def __str__(self):
         return self.name
 
@@ -15,6 +19,8 @@ class customer(models.Model):
     email = models.EmailField(max_length=100)
     password = models.CharField(max_length=50)
 
+    
+
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
 
@@ -24,10 +30,18 @@ class product(models.Model):
     category = models.ForeignKey(category, on_delete=models.CASCADE, default=1)
     description =models.CharField(max_length=250, default='', blank=True, null=True)
     image = models.ImageField(upload_to="upload/product")
+
+    #Add more details about the sales
+
+    is_on_sale = models.BooleanField(default=False)
+    sale_price = models.DecimalField(default=0, max_digits=6, decimal_places=2)
+
+    
     
     def __str__(self):
         return self.name
 
+    
   
 
 class order(models.Model):
