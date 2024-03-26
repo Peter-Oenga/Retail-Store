@@ -2,6 +2,9 @@ from django.shortcuts import render, redirect
 from . models import product
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from django.contrib.auth.forms import UserCreationForm
+from .forms import SignUpForm
+from django import forms
 
 # Create your views here.
 def index(request):
@@ -35,3 +38,28 @@ def login_user(request):
 
     else:
         return render(request, "login.html", {})
+
+
+
+def  register_user(request):
+    form = SignUpForm()
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password1']
+            #login The User
+
+            user = authenticate(username=username, password=password)
+            login(request, user)
+            messages.success(request, 'You have registered succesfully!')
+            return redirect('index')
+        
+        else:
+            messages.success(request, "Whoops! There was a problem, Please try again")
+            return redirect('register')
+    else:
+        return render(request, 'register.html', {"form":form})
