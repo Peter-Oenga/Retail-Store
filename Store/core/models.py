@@ -24,7 +24,7 @@ class customer(models.Model):
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
 
-class product(models.Model):
+class Product(models.Model):
     name = models.CharField(max_length=100)
     price = models.DecimalField(default=0, decimal_places=2, max_digits=6)
     category = models.ForeignKey(category, on_delete=models.CASCADE, default=1)
@@ -45,7 +45,7 @@ class product(models.Model):
   
 
 class order(models.Model):
-    product = models.ForeignKey(product, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
     customer = models.ForeignKey(customer, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1)
     address = models.CharField(max_length=100, default='', blank=True)
