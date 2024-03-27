@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from . models import Product
+from . models import Product, category
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
@@ -10,6 +10,21 @@ from django import forms
 def product(request, pk):
     product = Product.objects.get(id=pk)
     return render(request, "product.html", {'product': product})
+
+def Category(request, foo):
+    #Replace hyphen with empty space
+    #foo = foo.Replace('-' ' ')
+
+    #Grab the category from the url
+    try:
+        #Look up to admin/core/category/he url
+        Category = category.objects.get(name=foo)
+        products = Product.objects.filter(category=Category)
+        return render(request, 'category.html', {'products': products, 'Category': Category})
+    except:
+        messages.success(request, 'Invalid category!')
+        return redirect('index')
+   
 
 def index(request):
     products = Product.objects.all()
