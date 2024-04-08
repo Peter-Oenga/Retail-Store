@@ -12,3 +12,7 @@ class Cart:
 
         #Make sure that the cart is available to all the processes
         self.cart = cart
+
+
+    def add(self, product):
+        product_id = str(product_id)
