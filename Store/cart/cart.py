@@ -1,3 +1,5 @@
+from core.models import Product
+
 class Cart:
     def __init__(self, request):
         self.session = request.session
@@ -15,4 +17,24 @@ class Cart:
 
 
     def add(self, product):
-        product_id = str(product_id)
+        product_id = str(product.id)
+
+        if product_id in self.cart:
+            pass
+        else:
+            self.cart[product_id] = {"Product price: ": str(product.price)}
+
+        self.session.modified = True
+
+
+    def __len__(self):
+        return len(self.cart)
+    
+    def get_prods(self):
+        #Get the IDs from the cart
+        product_ids = self.cart.keys()
+
+        # Lookup the products in the database
+        products = Product.objests.filter(id__in=product_ids)
+
+        return products

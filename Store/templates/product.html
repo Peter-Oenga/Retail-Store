@@ -28,10 +28,10 @@
                     ${{product.price}}
                 {% endif %}
                 <br></br>
-                ID:  
+                
                 <br>
               <a href="{%url 'index' %}" class="btn btn-secondary">Home</a>
-              <button type="" class="btn btn-secondary" value="{{product.id}}" id="add-cart">Add to Cart</button>
+              <button type="button" class="btn btn-secondary" value="{{product.id}}" id="add-cart">Add to Cart</button>
             </center>
             </div>
           </div>
@@ -40,18 +40,20 @@
 <br><br><br><br><br><br><br><br><br><br><br><br>
 </div>
 <script>
+  var cartAddUrl = "{% url 'cart_add' %}";
+  // Chech if the button is pressed
   $(document).on('click', '#add-cart', function(e){
     e.preventDefault();
     $.ajax({
       type: 'POST',
-      url:"cart_add",
+      url: cartAddUrl,
       data:{
         product_id:$("#add-cart").val(),
         csrfmiddlewaretoken:'{{csrf_token}}',
         action: 'post'
       },
       success:function(json){
-      console.log(json)
+      document.getElementById().textContent  = json.Qty
     },
     error:function(xhr, errmsg, err){
 
