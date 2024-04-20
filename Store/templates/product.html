@@ -28,8 +28,23 @@
                     ${{product.price}}
                 {% endif %}
                 <br></br>
+                <div class="row justify-content-center">
+                  <div class="col-md-2" id="qty-selected">Quantity:
+                  </div>
+                <div class="col-md-2">
+                  <select class="form-select form-select-sm">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="3">4</option>
+                    <option value="3">5</option>
+                  </select>
+                </div>
                 
-                <br>
+              </div>
+                
+                
+                <br><br>
               <a href="{%url 'index' %}" class="btn btn-secondary">Home</a>
               <button type="button" class="btn btn-secondary" value="{{product.id}}" id="add-cart">Add to Cart</button>
             </center>
@@ -48,7 +63,8 @@
       type: 'POST',
       url: cartAddUrl,
       data:{
-        product_id:$("#add-cart").val(),
+        product_id: $("#add-cart").val(),
+        product_quantity: $("#qty_selected option:selected").text(),
         csrfmiddlewaretoken:'{{csrf_token}}',
         action: 'post'
       },
