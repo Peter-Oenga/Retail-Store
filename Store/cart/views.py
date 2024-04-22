@@ -7,7 +7,8 @@ from django.http import JsonResponse
 def cart_summary(request):
     cart = Cart(request)
     cart_products = cart.get_prods()
-    return render(request, 'cart_summary.html', {'cart_products': cart_products})
+    quantities = cart.get_quantities()
+    return render(request, 'cart_summary.html', {'cart_products': cart_products, "quantities": quantities})
 
 def cart_add(request):
     #The first thing is to get the cart
@@ -19,6 +20,7 @@ def cart_add(request):
          product_id = int(request.POST.get('product_id'))
 
          product_quantity = int(request.POST.get('product_quantity'))
+         print("Received Quantity:", product_quantity)
 
          #Lookup on the database
          product = get_object_or_404(Product, id=product_id)
