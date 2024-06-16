@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect
-from . models import Product, category
+from . models import Product, category, Profile
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
-from .forms import SignUpForm, UpdateUserForm
+from .forms import SignUpForm, UpdateUserForm, ChangePasswordForm, UserInfoForm
 from django import forms
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -112,6 +112,51 @@ def update_user(request):
         
         return render(request, "update_user.html", {'user_form': user_form})
     else:
-        messages.success(request, "You mustbe logged in!")
+        messages.success(request, "You must be logged in!")
         return redirect('index')
 
+
+def update_password(request):
+    if request.user.is_authenticated:
+        current_user = request.user
+
+        # Did the user fill in the form
+        if request.method == 'POST':
+            form = ChangePasswordForm(current_user, request.POST)
+           
+            # Check if the form is valid
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Your password has been succesfully updated, Log in again")
+                return redirect('login')
+            
+            for error in list(form.errors.values()):
+                messages.error(request, error)
+                return redirect('update_password')
+
+        else:
+            form = ChangePasswordForm(current_user)
+            return render(request, "update_password.html", {'form': form})
+        
+    else:
+        messages.success(request, "You Must be Logged in to change the password")
+        return redirect('index')
+
+
+def update_info(request):
+    if request.user.is_authenticated:
+        current_user = Profile.objects.get(user__id=request.user.id)
+        form = UserInfoForm(request.POST or None, instance=current_user)
+
+        if form.is_valid():
+            form.save()
+
+            login(request, current_user)
+            messages.success(request, "Your info has been succesfully updated!")
+
+            return redirect("index")
+        
+        return render(request, "update_info.html", {'user_form': form})
+    else:
+        messages.success(request, "You must be logged in!")
+        return redirect('index')
