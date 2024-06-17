@@ -8,6 +8,10 @@ from django import forms
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.contrib.auth.models import User
+from django.db.models import Q
+import json
+# from cart.Cart import Cart
+
 
 # Create your views here.
 @api_view(['GET'])
@@ -60,6 +64,20 @@ def login_user(request):
         
         if user is not None:
             login(request, user)
+
+            # current_user = Profile.objects.all(user__id=request.user.id)
+
+            # # Get the saved cart from the database
+            # saved_cart = current_user.old_cart
+
+            # # Convert the database string to a python dictionary
+            # if saved_cart:
+            #     converted_data = json.loads(saved_cart)
+
+            #     cart = Cart(request)
+
+
+
             messages.success(request, 'You have succesfully logged in!')
             return redirect('index')
         
@@ -87,7 +105,7 @@ def  register_user(request):
             user = authenticate(username=username, password=password)
             login(request, user)
             messages.success(request, 'You have registered succesfully!')
-            return redirect('index')
+            return redirect('login')
         
         else:
             messages.success(request, "Whoops! There was a problem, Please try again")
@@ -148,7 +166,7 @@ def update_info(request):
         current_user = Profile.objects.get(user__id=request.user.id)
         form = UserInfoForm(request.POST or None, instance=current_user)
 
-        if form.is_valid():
+        if form.is_valid(): 
             form.save()
 
             login(request, current_user)
@@ -160,3 +178,20 @@ def update_info(request):
     else:
         messages.success(request, "You must be logged in!")
         return redirect('index')
+
+
+def search(request):
+    if request.method == "POST":
+        searched = request.POST["searched"]
+
+        # Querying the database
+        searched = Product.objects.filter(Q(name__icontains = searched) | Q(description__icontains = searched))
+
+        # Checking if null
+        if not searched:
+            messages.success(request, "Product does not exist, please try again!")
+            return render(request, "search.html", {})
+        else:
+            return render(request, 'search.html', { 'searched':searched })
+    else:
+        return render(request, "search.html" , {})

@@ -15,4 +15,5 @@ urlpatterns = [
     path('Category/<str:foo>', views.Category, name="Category"),
     path('category_summary/', views.category_summary, name="category_summary"),
     path('hello-world/', views.hello_world, name='hello_world'),
+    path("search/", views.search, name='search'),
 ]
