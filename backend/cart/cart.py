@@ -130,4 +130,14 @@ class Cart():
 		if product_id in self.cart:
 			del self.cart[product_id]
 		self.session.modified = True
+
+
+		# Deal with a logged in user
+		if self.request.user.is_authenticated:
+			current_user = Profile.objects.filter(user__id=self.request.user.id)
+			carty = str(self.cart)
+			carty = carty.replace("\'", "\"")
+			# Delete carty from the Database
+
+			current_user.update(old_cart=str(carty))
 		

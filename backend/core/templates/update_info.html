@@ -1,7 +1,7 @@
 {% extends 'base.html'%}
 {% block content %}
 <!-- Header-->
-<header class="bg-dark py-5">
+<header class="bg-dark py-1">
     <div class="container px-4 px-lg-5 my-5">
         <div class="text-center text-white">
             <h1 class="display-4 fw-bolder">Update Info</h1>
@@ -16,9 +16,16 @@
             <div class="col-md-6 offset-md-3">
                 <br></br>
 
+                <strong>Billing Information</strong>
+
+                {{ shipping_form.as_p }}
+
+
+                <br> <br> <br>
                 <form method="POST" action="{%url 'update_info'%}">
                     {% csrf_token %}
-                    {{ form.as_p }}
+                    <strong>Shipping Information</strong>
+                    {{ user_form.as_p }}
                     <button type="submit" class="btn btn-secondary">
                     Update Info
                     </button>

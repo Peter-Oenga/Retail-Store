@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     "cart",
     'rest_framework',
     'corsheaders',
+    'payment'
 
 ]
 

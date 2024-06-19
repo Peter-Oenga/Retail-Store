@@ -3,6 +3,8 @@ from . models import Product, category, Profile
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
+from payment.forms import ShippingForm
+from payment.models import ShippingAddress 
 from .forms import SignUpForm, UpdateUserForm, ChangePasswordForm, UserInfoForm
 from django import forms
 from rest_framework.decorators import api_view
@@ -10,7 +12,7 @@ from rest_framework.response import Response
 from django.contrib.auth.models import User
 from django.db.models import Q
 import json
-# from cart.Cart import Cart
+from cart.cart import Cart
 
 
 # Create your views here.
@@ -54,40 +56,38 @@ def logout_user(request):
     messages.success(request, 'Logged out')
     return redirect('index')
 
-    
+
 def login_user(request):
-    if request.method == "POST":
-        username = request.POST["username"]
-        password = request.POST["password"]
-        user = authenticate(request, username=username, password=password)
-        
-        
-        if user is not None:
-            login(request, user)
+	if request.method == "POST":
+		username = request.POST['username']
+		password = request.POST['password']
+		user = authenticate(request, username=username, password=password)
+		if user is not None:
+			login(request, user)
 
-            # current_user = Profile.objects.all(user__id=request.user.id)
+			# Do some shopping cart stuff
+			current_user = Profile.objects.get(user__id=request.user.id)
+			# Get their saved cart from database
+			saved_cart = current_user.old_cart
+			# Convert database string to python dictionary
+			if saved_cart:
+				# Convert to dictionary using JSON
+				converted_cart = json.loads(saved_cart)
+				# Add the loaded cart dictionary to our session
+				# Get the cart
+				cart = Cart(request)
+				# Loop through the cart and add the items from the database
+				for key,value in converted_cart.items():
+					cart.db_add(product=key, quantity=value)
 
-            # # Get the saved cart from the database
-            # saved_cart = current_user.old_cart
+			messages.success(request, ("You Have Been Logged In!"))
+			return redirect('index')
+		else:
+			messages.success(request, ("There was an error, please try again..."))
+			return redirect('login')
 
-            # # Convert the database string to a python dictionary
-            # if saved_cart:
-            #     converted_data = json.loads(saved_cart)
-
-            #     cart = Cart(request)
-
-
-
-            messages.success(request, 'You have succesfully logged in!')
-            return redirect('index')
-        
-        else:
-            messages.success(request, "There was a problem please try again later")
-            return redirect('login')
-
-    else:
-        return render(request, "login.html", {})
-
+	else:
+		return render(request, 'login.html', {})
 
 
 def  register_user(request):
@@ -163,18 +163,27 @@ def update_password(request):
 
 def update_info(request):
     if request.user.is_authenticated:
+        # This gets the current logged in user
         current_user = Profile.objects.get(user__id=request.user.id)
+        # This here gets the User's shipping info
+        shipping_user = ShippingAddress.objects.get(user__id=request.user.id)
+
         form = UserInfoForm(request.POST or None, instance=current_user)
 
-        if form.is_valid(): 
+        # Get the user's shipping form
+        shipping_form = ShippingForm(request.POST or None, instance=shipping_user)
+
+        if form.is_valid() or shipping_form.is_valid(): 
             form.save()
 
-            login(request, current_user)
+            shipping_form.save()
+
+            # login(request, current_user)
             messages.success(request, "Your info has been succesfully updated!")
 
             return redirect("index")
         
-        return render(request, "update_info.html", {'user_form': form})
+        return render(request, "update_info.html", {'user_form': form, 'shipping_form': shipping_form})
     else:
         messages.success(request, "You must be logged in!")
         return redirect('index')
