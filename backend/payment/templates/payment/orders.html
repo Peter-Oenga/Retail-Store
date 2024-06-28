@@ -1,0 +1,50 @@
+{% extends 'base.html'%}
+{% block content %}
+
+
+<div class="container">
+    <div class="row">
+        <center>
+            <div class="col-8">
+                <div class="card">
+                    <div class="card-header">
+                      Order {{ order.id }} - ${{ order.amount_paid }}
+                    </div>
+                    <div class="card-body">
+                        <strong>Email:</strong> {{ order.email }} <br>
+                        {% if order.date_shipped %}
+                         <strong>Date Shipped:</strong> {{ order.date_shipped }}
+                        {% else %}
+                         <strong>Date Ordered:</strong> {{ order.date_ordered }}
+                        {% endif %}
+                         <br>
+                        {{ order.full_name }} <br>
+                         <pre>{{ order.shipping_address }} </pre> <br>
+
+                         {% for item in items %}
+                         {{ item.product }} - {{ item.quantity }} - {{ item.price }} <br>
+                         {% endfor %}
+                         <br> <br>
+                         {% if not order.shipped %}
+                         <form method="POST">
+                            {% csrf_token %}
+                            <input type="hidden", name="shipping_status", value="true">
+                            <button type="submit" class="btn btn-success">Mark as Shipped</button>
+                         </form>
+                         {% else %}
+                         <form method="POST">
+                            {% csrf_token %}
+                            <input type="hidden", name="shipping_status", value="false">
+                            <button type="submit" class="btn btn-danger">Mark as Not Shipped</button>
+                         </form>
+                         {% endif %}
+                    </div>
+                  </div>
+                <br><br>
+            </div>
+        </center>
+
+    </div>
+
+</div>
+{%endblock%}

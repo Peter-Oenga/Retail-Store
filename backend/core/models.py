@@ -73,7 +73,7 @@ class Product(models.Model):
     
   
 
-class order(models.Model):
+class Order(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     customer = models.ForeignKey(customer, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1)
@@ -81,6 +81,7 @@ class order(models.Model):
     phone = models.CharField(max_length=20)
     date = models.DateField(default=datetime.datetime.today)
     status = models.BooleanField(default=False)
+    shipped = models.BooleanField(default=False)
 
     def __str__(self):
         return self.product
