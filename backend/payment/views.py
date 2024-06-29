@@ -1,3 +1,4 @@
+import datetime
 from django.db import IntegrityError
 from django.shortcuts import render, redirect
 from cart.cart import Cart
@@ -41,6 +42,20 @@ def orders(request, pk):
 def shipped_dash(request):
 	if request.user.is_authenticated and request.user.is_superuser:
 		orders = Order.objects.filter(shipped=True)
+		if request.POST:
+			status = request.POST['shipping_status']
+			num = request.POST['num']
+			# Get the order
+			order = Order.objects.filter(id=num)
+			# Here we are getting the date and time
+			now = datetime.datetime.now()
+
+			# Here we are grabbing the order
+			order.update(shipped=False)
+
+			messages.success(request, "Shipping status updated")
+			return redirect("index")
+		
 		return render(request, "payment/shipped_dash.html", {"orders": orders})
 	else:
 		messages.success(request, "Access Denied!")
@@ -49,6 +64,19 @@ def shipped_dash(request):
 def not_shipped_dash(request):
 	if request.user.is_authenticated and request.user.is_superuser:
 		orders = Order.objects.filter(shipped=False)
+		if request.POST:
+			status = request.POST['shipping_status']
+			num = request.POST['num']
+			# Get the order here
+			order = Order.objects.filter(id=num)
+			# Here we are getting the date and time
+			now = datetime.datetime.now()
+			
+			# Here we are grabbing the order
+			order.update(shipped=True, date_shipped=now)
+
+			messages.success(request, "Shipping status updated")
+			return redirect("index")
 		return render(request, "payment/not_shipped_dash.html", {"orders": orders})
 	else:
 		messages.success(request, "Access Denied!")
@@ -108,6 +136,11 @@ def process_order(request):
 			for key in list(request.session.keys()):
 				if key == 'session_key':
 					del request.session[key]
+			
+			# Delete the cart from the database
+			current_user = Profile.objects.filter(user__id=request.user.id)
+			# Delete the shopping cart in the (old_cart field)
+			current_user.update(old_cart="")
 
 
 			messages.success(request, "Order Placed!")
