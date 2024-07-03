@@ -32,7 +32,8 @@ INSTALLED_APPS = [
     "cart",
     'rest_framework',
     'corsheaders',
-    'payment'
+    'payment',
+    'shipping'
 
 ]
 
@@ -98,6 +99,7 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
+            
     }
 }
 
