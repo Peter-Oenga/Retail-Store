@@ -57,12 +57,12 @@ class Cart():
 			current_user = Profile.objects.filter(user__id=self.request.user.id)
 
 			# Convert it to a String
-		carty = str(self.cart)
+			carty = str(self.cart)
 
-		carty = carty.replace("\'", "\"")
+			carty = carty.replace("\'", "\"")
 
-		# Save it to the current user
-		current_user.update(old_cart=str(carty))
+			# Save it to the current user
+			current_user.update(old_cart=str(carty))
 
 
 	def cart_total(self):

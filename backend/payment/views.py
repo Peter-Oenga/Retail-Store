@@ -9,6 +9,13 @@ from django.contrib.auth.models import User
 from core.models import Product, Profile
 
 
+# Importing paypal stuff
+from django.urls import reverse
+from paypal.standard.forms import PayPalPaymentsForm
+from django.conf import settings
+import uuid # This allows us to create unique user ids for duplicate orders
+
+
 # Create your views here.
 def orders(request, pk):
 	if request.user.is_authenticated and request.user.is_superuser:
@@ -164,7 +171,7 @@ def process_order(request):
 				# Get product ID
 				product_id = product.id
 				# Get product price
-				if product.is_sale:
+				if product.is_on_sale:
 					price = product.sale_price
 				else:
 					price = product.price
@@ -203,19 +210,34 @@ def billing_info(request):
         # Create a session with the shipping info
         my_shipping = request.POST
         request.session['my_shipping'] = my_shipping
+		
+		# host = request.get_host()
+
+		# Create a paypalform dictionary
+		# paypal_dict = {
+		# 'business' : settings.PAYPAL_RECEIVER_EMAIL,
+		# 'amount': totals,
+		# 'item_name': "LaptopOrder",
+		# 'no_shipping': "2",
+		# 'invoice': str(uuid.uuid4()),
+		# 'currency_code': 'KES',
+		# 'notify_url': 'https:://{}{}'.format(host, reverse("paypal-ipn")),
+		# 'return_url': 'https:://{}{}'.format(host, reverse("payment_success")),
+		# 'cancel_return': 'https:://{}{}'.format(host, reverse("payment_failed"))
+		# }
+
+		# Actual paypal button
+		# paypal_form = PayPalPaymentsForm(initial=paypal_dict)
 
         if request.user.is_authenticated:
             # Get the billing Form
             billing_form = PaymentForm()
-            return render(request, "payment/billing_info.html", {'cart_products': cart_products, "quantities": quantities, "shipping_form": request.POST, "billing_form":billing_form})
+            return render(request, "payment/billing_info.html", {"paypal_form":"paypal_form", 'cart_products': cart_products, "quantities": quantities, "shipping_form": request.POST, "billing_form":billing_form})
         else:
             # Get the billing Form
             billing_form = PaymentForm()
-            return render(request, "payment/billing_info.html", {'cart_products': cart_products, "quantities": quantities, "shipping_form": request.POST, "billing_form":billing_form})
-        
-
-        shipping_form = request.POST
-        return render(request, "payment/billing_info.html", {'cart_products': cart_products, "quantities": quantities, "totals": totals, "shipping_form": shipping_form})
+            return render(request, "payment/billing_info.html", {"paypal_form":"paypal_form", 'cart_products': cart_products, "quantities": quantities, "shipping_form": request.POST, "billing_form":billing_form})
+       
     else:
         messages.success(request, "Access Denied")
         return redirect('index')
@@ -238,3 +260,8 @@ def checkout(request):
 
 def payment_success(request):
     return render(request, "payment/payment_success.html", {})
+
+
+
+def payment_failed(request):
+    return render(request, "payment/payment_failed.html", {})

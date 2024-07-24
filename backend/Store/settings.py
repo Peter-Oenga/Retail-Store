@@ -33,8 +33,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'payment',
-    'shipping'
-
+    'shipping',
+    'paypal.standard.ipn',
 ]
 
 MIDDLEWARE = [
@@ -97,8 +97,10 @@ WSGI_APPLICATION = "Store.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+         "ENGINE": "django.db.backends.sqlite3",
+         "NAME": BASE_DIR / "db.sqlite3",
+        
+        
             
     }
 }
@@ -159,3 +161,9 @@ JAZZMIN_SETTINGS = {
     "copyright": "africart express",
 }
 
+# Add paypal settigs
+# Set sandbox to true
+
+PAYPAL_TEST = True
+
+PAYPAL_RECEIVER_EMAIL = "africartexpress@gmail.com"
