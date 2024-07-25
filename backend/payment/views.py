@@ -7,6 +7,8 @@ from . models import ShippingAddress, Order, OrderItem
 from django.contrib import messages
 from django.contrib.auth.models import User
 from core.models import Product, Profile
+from django.http import HttpResponse
+from django_daraja.mpesa.core import MpesaClient
 
 
 # Importing paypal stuff
@@ -198,6 +200,9 @@ def process_order(request):
 	else:
 		messages.success(request, "Access Denied")
 		return redirect('index')
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def billing_info(request):
@@ -210,53 +215,71 @@ def billing_info(request):
         # Create a session with the shipping info
         my_shipping = request.POST
         request.session['my_shipping'] = my_shipping
-		
-		# host = request.get_host()
 
-		# Create a paypalform dictionary
-		# paypal_dict = {
-		# 'business' : settings.PAYPAL_RECEIVER_EMAIL,
-		# 'amount': totals,
-		# 'item_name': "LaptopOrder",
-		# 'no_shipping': "2",
-		# 'invoice': str(uuid.uuid4()),
-		# 'currency_code': 'KES',
-		# 'notify_url': 'https:://{}{}'.format(host, reverse("paypal-ipn")),
-		# 'return_url': 'https:://{}{}'.format(host, reverse("payment_success")),
-		# 'cancel_return': 'https:://{}{}'.format(host, reverse("payment_failed"))
-		# }
+        host = request.get_host()
 
-		# Actual paypal button
-		# paypal_form = PayPalPaymentsForm(initial=paypal_dict)
+        # Create a paypalform dictionary
+        paypal_dict = {
+
+            'business': settings.PAYPAL_RECEIVER_EMAIL,
+            'amount': totals,
+            'item_name': "Laptop Order",
+            'no_shipping': "2",
+            'invoice': str(uuid.uuid4()),
+            'currency_code': 'KES',
+            'notify_url': 'https://{}{}'.format(host, reverse("paypal-ipn")),
+            'return_url': 'https://{}{}'.format(host, reverse("payment_success")),
+            'cancel_return': 'https://{}{}'.format(host, reverse("payment_failed"))
+        }
+
+        # Actual paypal button
+        paypal_form = PayPalPaymentsForm(initial=paypal_dict)
 
         if request.user.is_authenticated:
             # Get the billing Form
             billing_form = PaymentForm()
-            return render(request, "payment/billing_info.html", {"paypal_form":"paypal_form", 'cart_products': cart_products, "quantities": quantities, "shipping_form": request.POST, "billing_form":billing_form})
+            return render(request, "payment/billing_info.html", {
+                "paypal_form": paypal_form,
+                'cart_products': cart_products,
+                "quantities": quantities,
+                "shipping_form": request.POST,
+                "billing_form": billing_form
+            })
         else:
             # Get the billing Form
             billing_form = PaymentForm()
-            return render(request, "payment/billing_info.html", {"paypal_form":"paypal_form", 'cart_products': cart_products, "quantities": quantities, "shipping_form": request.POST, "billing_form":billing_form})
-       
+            return render(request, "payment/billing_info.html", {
+                "paypal_form": paypal_form,
+                'cart_products': cart_products,
+                "quantities": quantities,
+                "shipping_form": request.POST,
+                "billing_form": billing_form
+            })
     else:
         messages.success(request, "Access Denied")
         return redirect('index')
 
+
 def checkout(request):
-    cart = Cart(request)
-    cart_products = cart.get_prods
-    quantities = cart.get_quants
-    totals = cart.cart_total()
+	# Get the cart
+	cart = Cart(request)
+	cart_products = cart.get_prods
+	quantities = cart.get_quants
+	totals = cart.cart_total()
 
-    if request.user.is_authenticated:
-        shipping_user = ShippingAddress.objects.get(user__id=request.user.id)
-        shipping_form = ShippingForm(request.POST or None, instance=shipping_user)
-        return render(request, "payment/checkout.html", {'cart_products': cart_products, "quantities": quantities, "totals": totals, "shipping_form": shipping_form})
-    else:
-        shipping_form = ShippingForm(request.POST or None)
-        return render(request, "payment/checkout.html", {'cart_products': cart_products, "quantities": quantities, "totals": totals, "shipping_form": shipping_form})
-    
+	if request.user.is_authenticated:
+		# Checkout as logged in user
+		# Shipping User
+		shipping_user = ShippingAddress.objects.get(user__id=request.user.id)
+		# Shipping Form
+		shipping_form = ShippingForm(request.POST or None, instance=shipping_user)
+		return render(request, "payment/checkout.html", {"cart_products":cart_products, "quantities":quantities, "totals":totals, "shipping_form":shipping_form })
+	else:
+		# Checkout as guest
+		shipping_form = ShippingForm(request.POST or None)
+		return render(request, "payment/checkout.html", {"cart_products":cart_products, "quantities":quantities, "totals":totals, "shipping_form":shipping_form})
 
+	
 
 def payment_success(request):
     return render(request, "payment/payment_success.html", {})
@@ -265,3 +288,17 @@ def payment_success(request):
 
 def payment_failed(request):
     return render(request, "payment/payment_failed.html", {})
+
+
+
+
+def process_payment(request):
+    cl = MpesaClient()
+    # Use a Safaricom phone number that you have access to, for you to be able to view the prompt.
+    phone_number = '0795523526'
+    amount = 1
+    account_reference = 'reference'
+    transaction_desc = 'Description'
+    callback_url = 'https://api.darajambili.com/express-payment'
+    response = cl.stk_push(phone_number, amount, account_reference, transaction_desc, callback_url)
+    return HttpResponse(response)

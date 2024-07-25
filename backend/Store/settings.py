@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'payment',
     'shipping',
     'paypal.standard.ipn',
+    'django_daraja',
 ]
 
 MIDDLEWARE = [
@@ -167,3 +168,35 @@ JAZZMIN_SETTINGS = {
 PAYPAL_TEST = True
 
 PAYPAL_RECEIVER_EMAIL = "africartexpress@gmail.com"
+
+
+
+# MPESA DETAILS
+MPESA_ENVIRONMENT = 'sandbox'
+MPESA_CONSUMER_KEY = '4wkUHHWFAOgNVE9wUBV8G6GMRjtbodPo8ibM7PzSE2ADjXac'
+MPESA_CONSUMER_SECRET = 'EFKue0AQgbCbyiymFsHRLOXhnyi4EGm4xqKNalrW72vS9MN7wMTDi7Q1U56KeYOk'
+
+MPESA_SHORTCODE = '600978'
+
+MPESA_EXPRESS_SHORTCODE = '600000'
+
+# Type of shortcode
+# Possible values:
+# - paybill (For Paybill)
+# - till_number (For Buy Goods Till Number)
+
+MPESA_SHORTCODE_TYPE = 'paybill'
+
+# Lipa na MPESA Online passkey
+# Sandbox passkey is available on test credentials page
+# Production passkey is sent via email once you go live
+
+MPESA_PASSKEY = 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919'
+
+# Username for initiator (to be used in B2C, B2B, AccountBalance and TransactionStatusQuery Transactions)
+
+MPESA_INITIATOR_USERNAME = 'testapi'
+
+# Plaintext password for initiator (to be used in B2C, B2B, AccountBalance and TransactionStatusQuery Transactions)
+
+MPESA_INITIATOR_SECURITY_CREDENTIAL = 'Safaricom999!*!'

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - My E-Commerce Site</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body>
+    <header>
+        <h1>Welcome to My E-Commerce Site</h1>
+    </header>
+    <main>
+        <section>
+            <h2>Speedy Deliveries, Always</h2>
+            <p>With this shop homepage template, you'll find our best products and promotions.</p>
+        </section>
+        <section>
+            <h2>Make a Payment</h2>
+            <form action="{% url 'process_payment' %}" method="post">
+                {% csrf_token %}
+                <label for="phone_number">Phone Number:</label>
+                <input type="text" id="phone_number" name="phone_number" required>
+                
+                <label for="amount">Amount:</label>
+                <input type="number" id="amount" name="amount" required>
+
+                <button type="submit">Pay with M-PESA</button>
+            </form>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 My E-Commerce Site. All rights reserved.</p>
+    </footer>
+</body>
+</html>
