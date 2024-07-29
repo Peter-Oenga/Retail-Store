@@ -25,9 +25,9 @@
                             <br>
                                 {{ product.name }}
                                     {% if product.is_on_sale %}
-                                        ${{product.sale_price}}
+                                    KSh {{product.sale_price}}
                                     {% else %}
-                                        ${{product.price}}
+                                    KSh {{product.price}}
                                     {% endif %}
                                     <br/><br>
                                 
@@ -39,7 +39,7 @@
                                     {% endfor %}
                             {% endfor %} </small>
                             <br/><br>
-                            Total: ${{ totals }}
+                            Total: KSh {{ totals }}
                             <br><br>
                             <a href="{% url 'cart_summary' %}" class="btn btn-sm btn-outline-secondary">Update Items</a>
                         </div>

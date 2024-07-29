@@ -33,9 +33,9 @@
                                     <h5 class="fw-bolder">{{ product.name }}</h5>
                                     <!-- Product price-->
                                     <strike>
-                                        KES{{product.price}}
+                                        KSh {{product.price}}
                                     </strike>
-                                    &nbsp; KES{{product.sale_price}}
+                                    &nbsp; KSh {{product.sale_price}}
                                     <br>
                                     {{product.description}}
                                 </div>
@@ -48,7 +48,7 @@
                     </div>
 
 
-                    {%else%}
+                    {% else %}
                     <div class="col mb-5">
                         <div class="card h-100">
                             <!-- Product image-->
@@ -59,7 +59,7 @@
                                     <!-- Product name-->
                                     <h5 class="fw-bolder">{{product.name}}</h5>
                                     <!-- Product price-->
-                                        ${{product.price}}
+                                    KSh {{ product.price }}
                                     <br>
                                     {{product.description}}
                                 </div>
@@ -70,8 +70,8 @@
                             </div>
                         </div>
                     </div>
-                    {%endif%}
-                    {%endfor%}
+                    {% endif %}
+                    {% endfor %}
                 </div>
             </div>
         </section>

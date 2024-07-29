@@ -33,9 +33,9 @@
                                     <h5 class="fw-bolder">{{product.name}}</h5>
                                     <!-- Product price-->
                                     <strike>
-                                        ${{product.price}}
+                                        KSh {{product.price}}
                                     </strike>
-                                    &nbsp; ${{product.sale_price}}
+                                    &nbsp; KSh {{product.sale_price}}
                                     <br>
                                     {{product.description}}
                                 </div>
@@ -59,7 +59,7 @@
                                     <!-- Product name-->
                                     <h5 class="fw-bolder">{{product.name}}</h5>
                                     <!-- Product price-->
-                                        ${{product.price}}
+                                    KSh {{product.price}}
                                     <br>
                                     {{product.description}}
                                 </div>
@@ -70,8 +70,8 @@
                             </div>
                         </div>
                     </div>
-                    {%endif%}
-                    {%endfor%}
+                    {% endif %}
+                    {% endfor %}
                 </div>
             </div>
         </section>

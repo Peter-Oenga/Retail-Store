@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Success</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h2 class="card-title">Payment Successful</h2>
+            </div>
+            <div class="card-body">
+                <p class="card-text">Your payment was successfully processed.</p>
+                <p class="card-text">Details:</p>
+                <ul class="list-group">
+                    <li class="list-group-item">Merchant Request ID: {{ response.MerchantRequestID }}</li>
+                    <li class="list-group-item">Checkout Request ID: {{ response.CheckoutRequestID }}</li>
+                    <li class="list-group-item">Response Description: {{ response.ResponseDescription }}</li>
+                    <li class="list-group-item">Customer Message: {{ response.CustomerMessage }}</li>
+                </ul>
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'index' %}" class="btn btn-primary">Return to Home</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -36,6 +36,7 @@ def Category(request, foo):
     try:
         #Look up to admin/core/category/he url
         Category = category.objects.get(name=foo)
+        
         products = Product.objects.filter(category=Category)
         return render(request, 'category.html', {'products': products, 'Category': Category})
     except:

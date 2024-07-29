@@ -226,7 +226,7 @@ def billing_info(request):
             'item_name': "Laptop Order",
             'no_shipping': "2",
             'invoice': str(uuid.uuid4()),
-            'currency_code': 'KES',
+            'currency_code': 'USD',
             'notify_url': 'https://{}{}'.format(host, reverse("paypal-ipn")),
             'return_url': 'https://{}{}'.format(host, reverse("payment_success")),
             'cancel_return': 'https://{}{}'.format(host, reverse("payment_failed"))
@@ -291,14 +291,62 @@ def payment_failed(request):
 
 
 
+# payments/views.py
+from django.shortcuts import render
+from django.http import HttpResponse
+from .utils import get_access_token
+import requests
+from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
+import base64
+import datetime
+import json
 
-def process_payment(request):
-    cl = MpesaClient()
-    # Use a Safaricom phone number that you have access to, for you to be able to view the prompt.
-    phone_number = '0795523526'
-    amount = 1
-    account_reference = 'reference'
-    transaction_desc = 'Description'
-    callback_url = 'https://api.darajambili.com/express-payment'
-    response = cl.stk_push(phone_number, amount, account_reference, transaction_desc, callback_url)
-    return HttpResponse(response)
+
+
+@csrf_exempt
+def initiate_payment(request):
+    if request.method == 'POST':
+        phone_number = request.POST.get('phone_number')
+        
+        # Ensure phone number is in the correct format
+        if phone_number.startswith('0'):
+            phone_number = '254' + phone_number[1:]
+
+        amount = request.POST.get('amount')
+        access_token = get_access_token()
+        headers = {"Authorization": "Bearer %s" % access_token}
+        
+        timestamp = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+        password = base64.b64encode((settings.MPESA_SHORTCODE + settings.MPESA_PASSKEY + timestamp).encode()).decode('utf-8')
+
+        payload = {
+			"BusinessShortCode": 174379,
+			"Password": "MTc0Mzc5YmZiMjc5ZjlhYTliZGJjZjE1OGU5N2RkNzFhNDY3Y2QyZTBjODkzMDU5YjEwZjc4ZTZiNzJhZGExZWQyYzkxOTIwMjQwNzI5MTMxNTEy",
+			"Timestamp": "20240729131512",
+			"TransactionType": "CustomerPayBillOnline",
+			"Amount": 1,
+			"PartyA": 254795523526,
+			"PartyB": 174379,
+			"PhoneNumber": 254795523526,
+			"CallBackURL": "https://mydomain.com/path",
+			"AccountReference": "Africart Express",
+			"TransactionDesc": "Payment of products"
+            
+        }
+		
+		
+        response = requests.post("https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest", json=payload, headers=headers)
+        response_data = response.json()
+
+        if response_data.get("ResponseCode") == "0":
+            return render(request, 'payment/success.html', {'response': response_data})
+        else:
+            return render(request, 'payment/failure.html', {'response': response_data})
+    return render(request, 'payment/payment_form.html')
+
+@csrf_exempt
+def mpesa_confirmation(request):
+    data = json.loads(request.body)
+    # Process the data here
+    return HttpResponse("Confirmation received")
