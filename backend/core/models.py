@@ -63,7 +63,7 @@ class Product(models.Model):
     #Add more details about the sales
 
     is_on_sale = models.BooleanField(default=False)
-    sale_price = models.DecimalField(default=0, max_digits=6, decimal_places=2)
+    sale_price = models.DecimalField(default=0, max_digits=10, decimal_places=2)
 
     
     

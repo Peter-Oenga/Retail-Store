@@ -37,7 +37,8 @@
                 <br/><br/>
 
             {% endfor %}
-            Total:  KSh {{ totals }}
+            Total: Ksh {{ totals }}
+            
                         <br><br>
                         <a href="{% url 'cart_summary' %}" class="btn btn-sm btn-outline-secondary">Update Items</a>
                     </div>
@@ -53,6 +54,7 @@
                             <strong>City: </strong>{{ shipping_form.shipping_city }} <br>
                             <strong>Address: </strong>{{ shipping_form.shipping_address }} <br>
                             <strong>County: </strong>{{ shipping_form.shipping_county }} <br>
+                            <strong>Coordinates: </strong>Lat: {{ shipping_form.shipping_latitude }}, Lon: {{ shipping_form.shipping_longitude }} <br>
                             <br>
                             <a href="{% url 'checkout' %}" class="btn btn-outline-secondary">Update Shipping Info</a>
                             

@@ -18,8 +18,9 @@
                          <strong>Date Ordered:</strong> {{ order.date_ordered }}
                         {% endif %}
                          <br>
-                        {{ order.full_name }} <br>
-                         <pre>{{ order.shipping_address }} </pre> <br>
+                        <pre> <strong>Name:</strong> {{ order.full_name }} </pre>
+                        <pre> <strong>Address: </strong>{{ order.shipping_address }} </pre> <br>
+                        <pre> <strong>Coordinates:</strong> Lat: -4.046416358812283, Lon: 39.669463634490974 </pre> <br>
 
                          {% for item in items %}
                          {{ item.product }} - {{ item.quantity }} - {{ item.price }} <br>

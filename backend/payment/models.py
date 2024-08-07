@@ -42,11 +42,12 @@ class Order(models.Model):
     full_name = models.CharField(max_length=250)
     email = models.EmailField(max_length=250)
     shipping_address = models.TextField(max_length=15000)
+    shipping_latitude = models.FloatField(blank=True, null=True)
+    shipping_longitude = models.FloatField(blank=True, null=True)
     amount_paid = models.DecimalField(max_digits=10, decimal_places=2)
     date_ordered = models.DateTimeField(auto_now_add=True)
     shipped = models.BooleanField(default=False)
     date_shipped = models.DateTimeField(blank=True, null=True)
-
 
     def __str__(self):
         return f"Order - {str(self.id)}"

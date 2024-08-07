@@ -1,20 +1,18 @@
 from django.shortcuts import render, redirect
+from django.views.decorators.csrf import csrf_exempt
 
+from    cart import cart
 from .forms import AddressForm
-from .utils import geocode_address
 
+@csrf_exempt
 def address_view(request):
     if request.method == 'POST':
         form = AddressForm(request.POST)
         if form.is_valid():
-            street_address = form.cleaned_data.get('street_address')
-            city = form.cleaned_data.get('city')
-            state = form.cleaned_data.get('state')
-            zip_code = form.cleaned_data.get('zip_code')
-            country = form.cleaned_data.get('country')
+            
+            lat = form.cleaned_data.get('latitude')
+            lon = form.cleaned_data.get('longitude')
 
-            full_address = f"{street_address}, {city}, {state}, {zip_code}, {country}"
-            lat, lon = geocode_address(full_address)
             if lat and lon:
                 # Save the coordinates to the session or database
                 request.session['lat'] = lat
@@ -24,8 +22,18 @@ def address_view(request):
         form = AddressForm()
     return render(request, 'address_form.html', {'form': form})
 
-
 def order_summary_view(request):
     lat = request.session.get('lat')
     lon = request.session.get('lon')
-    return render(request, 'order_summary.html', {'lat': lat, 'lon': lon})
+    cart_products = cart.get_prods
+    quantities = cart.get_quants    # your existing code for fetching quantities
+   
+    context = {
+        'lat': lat,
+        'lon': lon,
+        'cart_products': cart_products,
+        'quantities': quantities,
+        
+    }
+    return render(request, 'order_summary.html', context)
+

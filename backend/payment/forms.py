@@ -24,9 +24,7 @@ class PaymentForm(forms.Form):
     card_number = forms.CharField(label="", max_length=100, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Card Number'}), required=False)
     card_exp_date = forms.CharField(label="", max_length=100, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Expiration Date'}), required=False)
     card_cvv_number = forms.CharField(label="", max_length=100, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'CVV Number'}), required=False)
-    card_address = forms.CharField(label="", max_length=100, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Card Address'}), required=False)
-    card_city = forms.CharField(label="", max_length=100, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Card City'}), required=False)
-    card_country = forms.CharField(label="", max_length=100, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Card County'}), required=False)
+    
 
 
 

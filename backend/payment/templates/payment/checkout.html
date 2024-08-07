@@ -1,4 +1,3 @@
-
 {% extends 'base.html' %}
 
 {% block content %}
@@ -46,19 +45,68 @@
                 </div>
                 <br><br>
                 <div class="card">
-                    <div class="card-header">
-                        Shipping Information
-                    </div>
-                    <div class="card-body">
-                        <form method="POST" action="{% url 'billing_info' %}">
-                            {% csrf_token %}
-                            {{ shipping_form.as_p }}
-                            <button type="button" class="btn btn-secondary" id="detect-location">Detect My Location</button>
-                            <button type="submit" class="btn btn-secondary">Continue To Billing</button>
-                        </form>
-                    </div>
-                </div>
+                    <!DOCTYPE html>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Select Delivery Location</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="card-header">
+            Shipping Information
+        </div>
 
+        <div class="card-body">
+            <div id="map"></div>
+            <form method="POST" action="{% url 'billing_info' %}">
+                {% csrf_token %}
+                {{ shipping_form.shipping_full_name }}
+                {{ shipping_form.shipping_email }}
+                {{ shipping_form.shipping_city }}
+                {{ shipping_form.shipping_county }}
+                {{ shipping_form.shipping_address }}
+                <input type="hidden" name="shipping_latitude" id="id_shipping_latitude" value="-4.043477">
+                <input type="hidden" name="shipping_longitude" id="id_shipping_longitude" value="39.668206">
+                <button type="submit" class="btn btn-secondary">Continue To Billing</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var map = L.map('map').setView([-4.043477, 39.668206], 15); // Default location (Mombasa Tudor)
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            var marker = L.marker([-4.043477, 39.668206], {draggable: true}).addTo(map);
+
+            marker.on('dragend', function(event) {
+                var latLng = event.target.getLatLng();
+                document.getElementById('id_shipping_latitude').value = latLng.lat;
+                document.getElementById('id_shipping_longitude').value = latLng.lng;
+            });
+
+            map.on('click', function(e) {
+                marker.setLatLng(e.latlng);
+                document.getElementById('id_shipping_latitude').value = e.latlng.lat;
+                document.getElementById('id_shipping_longitude').value = e.latlng.lng;
+            });
+        });
+    </script>
+</body>
+</html>
+                </div>
             </div>
         </div>
     </div>

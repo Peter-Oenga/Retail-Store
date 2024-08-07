@@ -4,18 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payment Form</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <h2>Make a Payment</h2>
-    <form action="{% url 'initiate_payment' %}" method="post">
-        {% csrf_token %}
-        <label for="phone_number">Phone Number:</label>
-        <input type="text" id="phone_number" name="phone_number" required>
-        
-        <label for="amount">Amount:</label>
-        <input type="number" id="amount" name="amount" required>
-
-        <button type="submit">Pay with M-PESA</button>
-    </form>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-primary text-white text-center">
+                        <h2>Make a Payment</h2>
+                    </div>
+                    <div class="card-body">
+                        <form action="{% url 'initiate_payment' %}" method="post">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="phone_number">Phone Number:</label>
+                                <input type="text" id="phone_number" name="phone_number" class="form-control" required>
+                            </div>
+                           
+                            <button type="submit" class="btn btn-success btn-block">Pay with M-PESA</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

@@ -48,6 +48,7 @@ def orders(request, pk):
 	else:
 		messages.success(request, "Access Denied")
 		return redirect("index")
+	
 def shipped_dash(request):
 	if request.user.is_authenticated and request.user.is_superuser:
 		orders = Order.objects.filter(shipped=True)
@@ -261,24 +262,37 @@ def billing_info(request):
 
 
 def checkout(request):
-	# Get the cart
-	cart = Cart(request)
-	cart_products = cart.get_prods
-	quantities = cart.get_quants
-	totals = cart.cart_total()
+    # Get the cart
+    cart = Cart(request)
+    cart_products = cart.get_prods
+    quantities = cart.get_quants
+    totals = cart.cart_total()
 
-	if request.user.is_authenticated:
-		# Checkout as logged in user
-		# Shipping User
-		shipping_user = ShippingAddress.objects.get(user__id=request.user.id)
-		# Shipping Form
-		shipping_form = ShippingForm(request.POST or None, instance=shipping_user)
-		return render(request, "payment/checkout.html", {"cart_products":cart_products, "quantities":quantities, "totals":totals, "shipping_form":shipping_form })
-	else:
-		# Checkout as guest
-		shipping_form = ShippingForm(request.POST or None)
-		return render(request, "payment/checkout.html", {"cart_products":cart_products, "quantities":quantities, "totals":totals, "shipping_form":shipping_form})
+    if request.user.is_authenticated:
+        try:
+            # Get the user's existing shipping address if it exists
+            shipping_user = ShippingAddress.objects.get(user=request.user)
+            shipping_form = ShippingForm(request.POST or None, instance=shipping_user)
+        except ShippingAddress.DoesNotExist:
+            shipping_form = ShippingForm(request.POST or None)
+    else:
+        # Checkout as guest
+        shipping_form = ShippingForm(request.POST or None)
 
+    if request.method == 'POST':
+        if shipping_form.is_valid():
+            shipping_address = shipping_form.save(commit=False)
+            if request.user.is_authenticated:
+                shipping_address.user = request.user
+            shipping_address.save()
+            return redirect('order_summary')
+
+    return render(request, "payment/checkout.html", {
+        "cart_products": cart_products,
+        "quantities": quantities,
+        "totals": totals,
+        "shipping_form": shipping_form,
+    })
 	
 
 def payment_success(request):

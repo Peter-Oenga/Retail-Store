@@ -6,3 +6,5 @@ class AddressForm(forms.Form):
     state = forms.CharField(max_length=100)
     zip_code = forms.CharField(max_length=10)
     country = forms.CharField(max_length=100)
+    latitude = forms.CharField(widget=forms.HiddenInput())
+    longitude = forms.CharField(widget=forms.HiddenInput())
