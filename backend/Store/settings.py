@@ -16,7 +16,12 @@ SECRET_KEY = "django-insecure-otk9a4@fko#l@a#59wxwpg*mh+(qbhh&oq@17-hm7xt$31=wf^
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = [ 'localhost', '127.0.0.1', '0.0.0.0']
+ALLOWED_HOSTS = [
+    'retail-store-ui2s.onrender.com',  # Your Render domain
+    'localhost',                        # Local development
+    '127.0.0.1',                        # Localhost IP address
+]
+
 
 
 # ALLOWED_HOSTS = []
