@@ -13,7 +13,6 @@ from django_daraja.mpesa.core import MpesaClient
 
 # Importing paypal stuff
 from django.urls import reverse
-from paypal.standard.forms import PayPalPaymentsForm
 from django.conf import settings
 import uuid # This allows us to create unique user ids for duplicate orders
 

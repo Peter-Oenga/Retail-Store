@@ -34,7 +34,6 @@ INSTALLED_APPS = [
     'corsheaders',
     'payment',
     'shipping',
-    'paypal.standard.ipn',
     'django_daraja',
 ]
 
